@@ -20,17 +20,36 @@ class BurgerBuilder extends Component {
     // Ingredients será montado como key-value pairs:
     // key corresponde ao ingrediente; value corresponde à quantidade
     state = {
-        ingredients: {
-            salad: 0,
-            meat: 0,
-            cheese: 0,
-            bacon: 0
-        },
+        ingredients: null,
         totalPrice: 4,
         purchasable: false,
         purchasing: false,
-        loading: false
+        loading: false,
+        error: false
     };
+
+    componentDidMount() {
+        axios.get('https://react-burger-builder-dbdf6.firebaseio.com/ingredients.json')
+            .then( response => {
+                const ingredients = response.data;
+                let price = this.state.totalPrice;
+                let purchasable = this.state.purchasable;
+                for (let ingredient in ingredients) {
+                    price += INGREDIENT_PRICES[ingredient] * ingredients[ingredient];
+                    if(ingredients[ingredient]>0){
+                        purchasable = true;
+                    }
+                }
+                this.setState({
+                    ingredients: ingredients,
+                    totalPrice: price,
+                    purchasable: purchasable
+                });
+            })
+            .catch( error => {
+                this.setState({ error: true });
+            });
+    }
 
     updatePurchaseState (ingredients) {
         const sum = Object.keys(ingredients)
@@ -130,27 +149,45 @@ class BurgerBuilder extends Component {
             disabledInfo[key] = disabledInfo[key] <= 0 
         }
 
-        let orderSummary = <OrderSummary ingredients={this.state.ingredients}
-                                         price={this.state.totalPrice}
-                                         purchaseCancelled={this.purchaseCancelHandler}
-                                         purchaseContinued={this.purchaseContinueHandler} />;
+        // Resumo do pedido será montado após termos a lista de ingredientes
+        let orderSummary = null;
+        // Tanto o burquer quando os controles, serão mostrados somente após a leitura dos ingredientes..
+        let burger = this.state.error ? <p>Cannot load ingredients!</p> : <Spinner />;
+
+        if(this.state.ingredients) {
+            // Já temos os ingredientes, então podemos seguir
+            burger = (
+                <Aux>
+                    <Burger ingredients={this.state.ingredients} />
+                    <BuildControls 
+                        ingredientAdded={this.addIngredientHandler}
+                        ingredientRemoved={this.removeIngredientHandler}
+                        disabled={disabledInfo}
+                        ordered={this.purchaseHandler}
+                        price={this.state.totalPrice}
+                        purchasable={this.state.purchasable} />
+                </Aux>
+            );
+            // Tb podemos montar o resumo do pedido
+            orderSummary = <OrderSummary
+                                ingredients={this.state.ingredients}
+                                price={this.state.totalPrice}
+                                purchaseCancelled={this.purchaseCancelHandler}
+                                purchaseContinued={this.purchaseContinueHandler} />;
+        }
+
+        // Enquanto estiver carregando, no lugar do resumo mostraremos o spinner
         if(this.state.loading){
             orderSummary = <Spinner />;
         }
+
         
         return (
             <Aux>
                 <Modal show={this.state.purchasing} modalClosed={this.purchaseCancelHandler} >
                     {orderSummary}
                 </Modal>
-                <Burger ingredients={this.state.ingredients} />
-                <BuildControls 
-                    ingredientAdded={this.addIngredientHandler}
-                    ingredientRemoved={this.removeIngredientHandler}
-                    disabled={disabledInfo}
-                    ordered={this.purchaseHandler}
-                    price={this.state.totalPrice}
-                    purchasable={this.state.purchasable} />
+                {burger}
             </Aux>
         );
     }
