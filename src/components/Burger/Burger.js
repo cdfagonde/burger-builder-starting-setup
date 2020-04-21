@@ -3,6 +3,7 @@ import classes from './Burger.css';
 import BurgerIngredient from './BurgerIngredient/BurgerIngredient';
 
 const burger = (props) => {
+    // console.log(props);
     // Agora algo interessante.. vamos transformar o objeto ingredients de forma de poder gerar os ingredientes do burger
     let transformedIngredients = Object.keys( props.ingredients )
         .map( igKey => {
