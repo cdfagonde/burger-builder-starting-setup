@@ -6,7 +6,7 @@ import ContactData from '../Checkout/ContactData/ContactData';
 class Checkout extends Component {
     state = {
         ingredients: null,
-        price: 0
+        totalPrice: 0
     }
 
     UNSAFE_componentWillMount() {
@@ -48,7 +48,7 @@ class Checkout extends Component {
                     path={this.props.match.path + '/contact-data'} 
                     // component={ContactData}
                     render={(props) => (
-                        <ContactData ingredients={this.state.ingredients} price={this.totalPrice} {...props} />
+                        <ContactData ingredients={this.state.ingredients} price={this.state.totalPrice} {...props} />
                     )} />
             </div>
         );

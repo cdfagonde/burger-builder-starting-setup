@@ -25,6 +25,8 @@ class ContactData extends Component {
         let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
         let dateTime = date+' '+time;
 
+        console.log("Preço total: " + this.props.price );
+
         const order = {
             ingredients: this.props.ingredients,
             price: this.props.price,
