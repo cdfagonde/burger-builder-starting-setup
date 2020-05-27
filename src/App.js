@@ -8,6 +8,10 @@ import Orders from './containers/Orders/Orders';
 
 class App extends Component {
   render() {
+    //
+    console.log("React version --> " + React.version);
+
+    //
     return (
       <div>
         <Layout>
