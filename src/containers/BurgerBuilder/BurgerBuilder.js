@@ -47,6 +47,7 @@ class BurgerBuilder extends Component {
     }
 
     purchaseContinueHandler = () => {
+        this.props.onInitPurchase();
         // Agora com Redux, só precisamos mudar de página sem precisar passar nada..
         this.props.history.push('/checkout');
     }
@@ -106,9 +107,9 @@ class BurgerBuilder extends Component {
 
 const mapStateToProps = state => {
     return {
-        ings: state.ingredients,
-        tprc: state.totalPrice,
-        error: state.error
+        ings: state.burgerBuilder.ingredients,
+        tprc: state.burgerBuilder.totalPrice,
+        error: state.burgerBuilder.error
     }
 };
 
@@ -116,7 +117,8 @@ const mapDispatchToProps = dispatch => {
     return {
         onIngredientAdded: (i) => dispatch( burgerBuilderActions.addIngredient(i)),
         onIngredientRemoved: (i) => dispatch( burgerBuilderActions.removeIngredient(i)),
-        onInitIngredients: () => dispatch(burgerBuilderActions.initIngredients())
+        onInitIngredients: () => dispatch(burgerBuilderActions.initIngredients()),
+        onInitPurchase: () => dispatch(burgerBuilderActions.purchaseInit())
     }
 };
 
