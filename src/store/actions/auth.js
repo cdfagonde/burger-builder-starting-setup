@@ -66,7 +66,7 @@ export const auth = (email,password,isSignup) => {
         // Neste caso usamos o default axios xq isto só será usado uma vez.. não precisamos criar nada específico.
         axios.post(url, authData)
             .then( response => {
-                console.log(response.data);
+                // console.log(response.data);
                 const expirationDate = new Date(new Date().getTime() + response.data.expiresIn * 1000);
                 console.log(expirationDate);
                 // Primeiramente vamos guardar token e timeout no localStorage
@@ -102,12 +102,12 @@ export const authCheckState = () => {
             const userId = localStorage.getItem('userlId');
             const expirationDate = new Date(localStorage.getItem('expirationDate'));
             if(expirationDate > new Date() ) {
+                // Recalculamos o tempo restante para expiração (em segundos)
                 const newTimeout = (expirationDate.getTime() - new Date().getTime()) / 1000;
-                // const newTimeout = expirationDate.getSeconds() - new Date().getSeconds();
-                console.log(newTimeout);
+                // console.log(newTimeout);
                 // Ultimo login ainda não expirou..
                 dispatch( authSuccess( token, userId ));
-                // Precisamos recalcular o timeout
+                // Redefinimos o tempo restante nesta sessão
                 dispatch( checkAuthTimeout( newTimeout ));
             } else {
                 // Ultimo acesso expirado..
