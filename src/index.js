@@ -16,8 +16,9 @@ import authReducer from './store/reducers/auth';
 // // Forma simples de instalar Redux DevTools
 // const store = createStore(burgerBuilderReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
-// Agora vamos com a forma avançada..
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+// Agora vamos com a forma avançada.
+// process.env.NODE_ENV eh a forma de consultar uma variável de ambiente. Com isto as devtools só vem em desenvolvimento.
+const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
 
 const rootReducer = combineReducers({
     burgerBuilder: burgerBuilderReducer,

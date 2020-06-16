@@ -99,7 +99,7 @@ export const authCheckState = () => {
             // Se não existir token, só precisamos limpar..
             dispatch( logout());
         } else {
-            const userId = localStorage.getItem('userlId');
+            const userId = localStorage.getItem('userId');
             const expirationDate = new Date(localStorage.getItem('expirationDate'));
             if(expirationDate > new Date() ) {
                 // Recalculamos o tempo restante para expiração (em segundos)

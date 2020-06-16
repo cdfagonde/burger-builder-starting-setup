@@ -2,7 +2,7 @@ import * as actionTypes from '../actions/actionTypes';
 
 const initialState = {
     token: null,
-    user: null,
+    userId: null,
     error: null,
     loading: false,
     authRedirectPath: '/'
@@ -20,7 +20,7 @@ const authSuccess = (state,action) => {
     return {
         ...state,
         token: action.idToken,
-        user: action.userId,
+        userId: action.userId,
         error: null,
         loading: false
     };
@@ -30,7 +30,7 @@ const authFail = (state,action) => {
     return {
         ...state,
         token: null,
-        user: null,
+        userId: null,
         error: action.error,
         loading: false
     };
@@ -40,7 +40,7 @@ const authLogout = (state) => {
     return {
         ...state,
         token: null,
-        user: null,
+        userId: null,
         error: null,
         loading: false
     };

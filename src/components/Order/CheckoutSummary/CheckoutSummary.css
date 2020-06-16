@@ -4,8 +4,9 @@
     margin: auto
 }
 
-@media (min-width: 600px) {
+/* Esta definição estava bagunçando o burger para telas menores.
+    @media (min-width: 600px) {
     .CheckoutSummary {
         width: 500px;
     }
-}
+} */
