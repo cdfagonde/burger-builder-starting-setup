@@ -18,7 +18,8 @@ import authReducer from './store/reducers/auth';
 
 // Agora vamos com a forma avançada.
 // process.env.NODE_ENV eh a forma de consultar uma variável de ambiente. Com isto as devtools só vem em desenvolvimento.
-const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
+// 21/06/2020: Li sobre alguns problemas com browsers sem o devtools, por isso a inclusão dos parentesis 
+const composeEnhancers = process.env.NODE_ENV === ('development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null) || compose;
 
 const rootReducer = combineReducers({
     burgerBuilder: burgerBuilderReducer,
