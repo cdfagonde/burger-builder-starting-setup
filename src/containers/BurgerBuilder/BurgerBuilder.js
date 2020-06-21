@@ -14,7 +14,7 @@ import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 // import * as actionCreators from '../../store/actions/burgerBuilder';
 import * as burgerBuilderActions from '../../store/actions/index';
 
-class BurgerBuilder extends Component {
+export class BurgerBuilder extends Component {
 
     // Ingredients será montado como key-value pairs:
     // key corresponde ao ingrediente; value corresponde à quantidade

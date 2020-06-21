@@ -12,6 +12,7 @@ import Logout from './containers/Auth/Logout/Logout';
 import * as actions from './store/actions/index';
 
 
+// Preparamos lazy-loading..
 const asyncCheckout = asyncComponent( () => {
   return import('./containers/Checkout/Checkout');
 });
