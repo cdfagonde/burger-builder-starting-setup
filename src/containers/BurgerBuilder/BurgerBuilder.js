@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 import Aux from '../../hoc/Auxi/Auxi';
 import Burger from '../../components/Burger/Burger';
@@ -14,20 +14,41 @@ import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 // import * as actionCreators from '../../store/actions/burgerBuilder';
 import * as burgerBuilderActions from '../../store/actions/index';
 
-export class BurgerBuilder extends Component {
+const burgerBuilder = props => {
 
     // Ingredients será montado como key-value pairs:
     // key corresponde ao ingrediente; value corresponde à quantidade
-    state = {
-        purchasing: false
-    };
+    // state = {
+    //     purchasing: false
+    // };
+    const [purchasing,setPurchasing] = useState(false);
 
-    componentDidMount() {
-        // console.log(this.props);
-        this.props.onInitIngredients();
-    }
+    // Aqui vamos de useDispatch
+    const dispatch = useDispatch();
+    const onIngredientAdded     = (i) => dispatch( burgerBuilderActions.addIngredient(i));
+    const onIngredientRemoved   = (i) => dispatch( burgerBuilderActions.removeIngredient(i));
+    const onInitPurchase        = ()  => dispatch( burgerBuilderActions.purchaseInit());
+    const onSetAuthRedirectPath = (p) => dispatch( burgerBuilderActions.setAuthRedirectPath(p));
+    const onInitIngredients     = useCallback(()  => {
+        return dispatch(burgerBuilderActions.initIngredients());
+    }, [dispatch]);   // Eu acho que esta dependencia não eh necessária
+    
+    // Logicamente, useSelector tb está no jogo..
+    // const var = useSelector( state => return state.algumaCoisa );
+    const ings = useSelector( state => state.burgerBuilder.ingredients );
+    const tprc = useSelector( state => state.burgerBuilder.totalPrice );
+    const error = useSelector( state => state.burgerBuilder.error );
+    const isAuthenticated = useSelector( state => state.auth.token !== null );
 
-    updatePurchaseState (ingredients) {
+    // componentDidMount() {
+    //     // console.log(this.props);
+    //     this.props.onInitIngredients();
+    // }
+    useEffect(() => {
+        onInitIngredients();
+    }, [onInitIngredients]);
+
+    const updatePurchaseState = (ingredients) => {
         const sum = Object.keys(ingredients)
                     .map(igKey => {
                         return ingredients[igKey];
@@ -38,31 +59,33 @@ export class BurgerBuilder extends Component {
         return (sum > 0);
     }
 
-    purchaseHandler = () => {
-        if(this.props.isAuthenticated){
+    const purchaseHandler = () => {
+        if(isAuthenticated){
             // Somente vamos abrir o modal se estivermos autenticados
-            this.setState({ purchasing: true });
+            // this.setState({ purchasing: true });
+            setPurchasing(true);
         } else {
             // Neste caso vamos redirecionar para a página de login
-            this.props.onSetAuthRedirectPath('/checkout');
-            this.props.history.push('/auth');
+            onSetAuthRedirectPath('/checkout');
+            props.history.push('/auth');
         }
         
     }
 
-    purchaseCancelHandler = () => {
-        this.setState({ purchasing: false });
+    const purchaseCancelHandler = () => {
+        // this.setState({ purchasing: false });
+        setPurchasing(false);
     }
 
-    purchaseContinueHandler = () => {
-        this.props.onInitPurchase();
+    const purchaseContinueHandler = () => {
+        onInitPurchase();
         // Agora com Redux, só precisamos mudar de página sem precisar passar nada..
-        this.props.history.push('/checkout');
+        props.history.push('/checkout');
     }
 
-    render() {
+    // No lugar do render..
         const disabledInfo = {
-            ...this.props.ings
+            ...ings
         }
         for (let key in disabledInfo) {
             disabledInfo[key] = disabledInfo[key] <= 0 
@@ -71,49 +94,49 @@ export class BurgerBuilder extends Component {
         // Resumo do pedido será montado após termos a lista de ingredientes
         let orderSummary = null;
         // Tanto o burquer quando os controles, serão mostrados somente após a leitura dos ingredientes..
-        let burger = this.props.error ? <p>Cannot load ingredients!</p> : <Spinner />;
+        let burger = error ? <p>Cannot load ingredients!</p> : <Spinner />;
 
-        if(this.props.ings) {
+        if(ings) {
             // Já temos os ingredientes, então podemos seguir
             burger = (
                 <Aux>
-                    <Burger ingredients={this.props.ings} />
+                    <Burger ingredients={ings} />
                     <BuildControls 
-                        ingredientAdded={ this.props.onIngredientAdded }   /* O parametro é incluido dentro de BuildControls */
-                        ingredientRemoved={ this.props.onIngredientRemoved }  /* O parametro é incluido dentro de BuildControls */
+                        ingredientAdded={ onIngredientAdded }   /* O parametro é incluido dentro de BuildControls */
+                        ingredientRemoved={ onIngredientRemoved }  /* O parametro é incluido dentro de BuildControls */
                         disabled={disabledInfo}
-                        ordered={this.purchaseHandler}
-                        isAuth={this.props.isAuthenticated}
-                        price={this.props.tprc}
-                        purchasable={this.updatePurchaseState(this.props.ings)} />
+                        ordered={purchaseHandler}
+                        isAuth={isAuthenticated}
+                        price={tprc}
+                        purchasable={updatePurchaseState(ings)} />
                 </Aux>
             );
             // Tb podemos montar o resumo do pedido
             orderSummary = <OrderSummary
-                                ingredients={this.props.ings}
-                                price={this.props.tprc}
-                                purchaseCancelled={this.purchaseCancelHandler}
-                                purchaseContinued={this.purchaseContinueHandler} />;
+                                ingredients={ings}
+                                price={tprc}
+                                purchaseCancelled={purchaseCancelHandler}
+                                purchaseContinued={purchaseContinueHandler} />;
         }
 
         // Enquanto estiver carregando, no lugar do resumo mostraremos o spinner
         // if(this.state.loading){
         //     orderSummary = <Spinner />;
         // }
-
         
         return (
             <Aux>
-                <Modal show={this.state.purchasing} modalClosed={this.purchaseCancelHandler} >
+                <Modal show={purchasing} modalClosed={purchaseCancelHandler} >
                     {orderSummary}
                 </Modal>
                 {burger}
             </Aux>
         );
-    }
+
 }
 
 
+/*
 const mapStateToProps = state => {
     return {
         ings: state.burgerBuilder.ingredients,
@@ -134,4 +157,8 @@ const mapDispatchToProps = dispatch => {
 };
 
 // Lindo caso de 2 wrapping elements
-export default connect(mapStateToProps,mapDispatchToProps)(withErrorHandler( BurgerBuilder,axios ));
+export default connect(mapStateToProps,mapDispatchToProps)(withErrorHandler( burgerBuilder,axios ));
+*/
+
+// Agora que usamos useSelector e useDispatch, não precisamos mais do connect
+export default withErrorHandler( burgerBuilder,axios );

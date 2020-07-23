@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import Spinner from '../../../components/UI/Spinner/Spinner';
@@ -11,8 +11,9 @@ import { checkValidity } from '../../../shared/utility';
 
 import classes from './ContactData.css';
 
-const contactData = props => {
-    const [orderForm,setOrderForm] = useState({
+class ContactData extends Component {
+    state = {
+        orderForm: {
             name: {
                 elementType: 'input',
                 elementConfig: {
@@ -75,8 +76,7 @@ const contactData = props => {
                 },
                 value: '',
                 validation: {
-                    required: true,
-                    isEmail: true
+                    required: true
                 },
                 valid: false,
                 touched: false
@@ -93,17 +93,17 @@ const contactData = props => {
                 value: 'standard',
                 valid: true
             },
-        });
-    const [formIsValid,setFormIsValid] = useState(false);
+        },
+        formIsValid: false
+    }
 
-
-    const orderHandler = (event) => {
+    orderHandler = (event) => {
         event.preventDefault();
         //
         const formData = {};
         // Formamos nome:valor com os elementos do formulário
-        for(let elemID in orderForm){
-            formData[elemID] = orderForm[elemID].value;
+        for(let elemID in this.state.orderForm){
+            formData[elemID] = this.state.orderForm[elemID].value;
         }
 
         // Defino a hora atual para guardar junto com o pedido
@@ -114,22 +114,22 @@ const contactData = props => {
 
         // Este será o nosso pedido
         const order = {
-            ingredients: props.ings,
-            price: props.tprc,
+            ingredients: this.props.ings,
+            price: this.props.tprc,
             orderData: formData,
-            userId: props.userId,
+            userId: this.props.userId,
             timestamp: dateTime
         }
 
         // 
-        props.onOrderBurger( order,props.token );
+        this.props.onOrderBurger( order,this.props.token );
 
     }
 
-    const inputChangedHandler = (event,inputIdentifier) => {
+    inputChangedHandler = (event,inputIdentifier) => {
         // Primeiramente vou clonar o orderForm do state.
         const updatedOrderForm = {
-            ...orderForm
+            ...this.state.orderForm
         }
         // Essa clonagem só funciona no primeiro núvel. Os elementos que eram objetos, nao foram clonados. Ainda são uma referencia
         // assim como o anterior. Por este motivo, precisamos clonar novamente o elemento que desejamos 
@@ -149,42 +149,39 @@ const contactData = props => {
         }
         
         // Só nos resta atualizar o state. Tudo isto só para atualizar o valor !!!
-        // this.setState({ 
-        //     orderForm: updatedOrderForm,
-        //     formIsValid: formIsValid
-        //  });
-         setOrderForm(updatedOrderForm);
-         setFormIsValid(formIsValid);
+        this.setState({ 
+            orderForm: updatedOrderForm,
+            formIsValid: formIsValid
+         });
     }
 
-
-    // No lugar do render..
+    render() {
         const formElementsArray = [];
 
         // Nesta forma de for, cada key corresponde a cada uma das chaves.
-        for (let key in orderForm) {
+        for (let key in this.state.orderForm) {
             formElementsArray.push({
                 id: key,
-                config: orderForm[key]
+                config: this.state.orderForm[key]
             });
         }
 
         let form = (
-            <form onSubmit={orderHandler}>
+            <form onSubmit={this.orderHandler}>
                 {formElementsArray.map(formElement => (
                     <Input 
                         key={formElement.id}
                         elementType={formElement.config.elementType}
                         elementConfig={formElement.config.elementConfig}
-                        changed={ (event) => inputChangedHandler(event,formElement.id)}
+                        changed={ (event) => this.inputChangedHandler(event,formElement.id)}
                         invalid={!formElement.config.valid && formElement.config.validation && formElement.config.touched}
                         value={formElement.config.value} />
                 ))}
 
-                <Button btnType="Success" disabled={!formIsValid}>ORDER</Button>
+                <Button btnType="Success" disabled={!this.state.formIsValid}>ORDER</Button>
             </form>
         );
-        if(props.loading){
+        if(this.props.loading){
             form = <Spinner />;
         }
         return (
@@ -193,7 +190,7 @@ const contactData = props => {
                 {form}
             </div>
         );
-
+    }
 }
 
 
@@ -213,4 +210,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps,mapDispatchToProps)(withErrorHandler(contactData,axios));
+export default connect(mapStateToProps,mapDispatchToProps)(withErrorHandler(ContactData,axios));

@@ -1,45 +1,27 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Modal from '../../components/UI/Modal/Modal';
 import Aux from '../Auxi/Auxi';
+// Nosso custom hook
+import useHttpErrorHandler from '../../hooks/http-error-handler';
 
 const withErrorHandler = ( WrappedComponent,axios ) => {
-    return class extends Component {
-        state = {
-            error: null
-        }
+    return props => {
 
-        UNSAFE_componentWillMount() {
-            // Neste caso vamos salvar para usar na hora de sair..
-            this.requestInterceptor = axios.interceptors.request.use(req => {
-                this.setState({ error: null });
-                return req;
-            });
-            this.responseInterceptor = axios.interceptors.response.use( res => res,error => {
-                this.setState({ error: error });
-            });
-        }
+        // Estou usando estes 2 nomes só para manter os que já tinha definido anteriormente.
+        const [error,errorConfirmedHandler] = useHttpErrorHandler(axios);
 
-        componentWillUnmount() {
-            axios.interceptors.request.eject(this.requestInterceptor);
-            axios.interceptors.response.eject(this.responseInterceptor);
-        }
-
-        errorConfirmedHandler = () => {
-            this.setState({ error: null });
-        }
-
-        render () {
+        // No local do render..
             return (
                 <Aux>
                     <Modal 
-                        show={ this.state.error }
-                        modalClosed={this.errorConfirmedHandler}>
-                        { this.state.error ? this.state.error.message : null }
+                        show={error}
+                        modalClosed={errorConfirmedHandler}>
+                        {/* { this.state.error ? this.state.error.message : null } */}
+                        { error && error.message  }
                     </Modal>
-                    <WrappedComponent {...this.props} />
+                    <WrappedComponent {...props} />
                 </Aux>
             ); 
-        }
     };
 }
 

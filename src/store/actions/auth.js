@@ -68,7 +68,7 @@ export const auth = (email,password,isSignup) => {
             .then( response => {
                 // console.log(response.data);
                 const expirationDate = new Date(new Date().getTime() + response.data.expiresIn * 1000);
-                console.log(expirationDate);
+                // console.log(expirationDate);
                 // Primeiramente vamos guardar token e timeout no localStorage
                 localStorage.setItem('token',response.data.idToken);
                 localStorage.setItem('expirationDate',expirationDate);
