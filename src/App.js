@@ -1,7 +1,8 @@
-import React, { useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 // import asyncComponent from '../src/hoc/asyncComponent/asyncComponent';
+import { getLanguage } from './shared/utility';
 
 import Layout from './hoc/Layout/Layout';
 import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
@@ -44,15 +45,27 @@ const app = props => {
     }, [onAutoAuth]);
   
     //
-    if(process.env.NODE_ENV !== 'development') {
+    if(process.env.NODE_ENV === 'development') {
       console.log("React version --> " + React.version);
     };
+
+    // Se houver linguagem no local storage, começaremos com ela..
+    const languageInLocalStorage = getLanguage();
+
+    // Status para tratamento da linguagem
+    const [ language,setLanguage ] = useState(languageInLocalStorage);
+
+    // Tratamento da mudança de idioma
+    const changeLanguageHandler = (lang) => {
+        setLanguage(lang);
+        localStorage.setItem("burger-language",lang);
+    }
 
     //
     let routes = (
       <Switch>
-        <Route path="/auth"   render={props => <Auth {...props}/>} />
-        <Route path="/" exact component={BurgerBuilder} />
+        <Route path="/auth" render={props => <Auth {...props}/>} />
+        <Route path="/"     exact component={BurgerBuilder} />
         <Redirect to="/" />
       </Switch>
     );
@@ -70,10 +83,19 @@ const app = props => {
     }
 
     //
+    const texto = {
+      'EN': 'Loading..',
+      'ES': 'Cargando..',
+      'BR': 'Carregando..',
+      'FR': 'Chargement..',
+      'IT': 'Caricamento in corso..'
+    }
+
+    // Agora vai..
     return (
       <div>
-        <Layout>
-          <Suspense fallback={<p>Loading..</p>}>{routes}</Suspense>
+        <Layout language={language} languageChanged={(lang) => changeLanguageHandler(lang)}>
+          <Suspense fallback={<p>{texto[language]}</p>}>{routes}</Suspense>
         </Layout>
       </div>
     );

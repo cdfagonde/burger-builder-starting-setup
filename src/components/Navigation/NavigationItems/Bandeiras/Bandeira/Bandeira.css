@@ -1,0 +1,15 @@
+.Bandeira {
+    background-color: transparent;
+    display: contents;
+    height: 80%;
+    box-sizing: border-box;
+    border-radius: 5px;
+    border: 1px solid white;
+}
+
+.Bandeira img {
+    width: 30px;
+    height: 24px;
+    padding: 2px;
+    cursor: pointer;
+}

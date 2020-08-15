@@ -6,17 +6,15 @@ import classes from './Layout.css';
 import Toolbar from '../../components/Navigation/Toolbar/Toolbar';
 import SideDrawer  from '../../components/Navigation/SideDrawer/SideDrawer';
 
+
 const layout = props => {
-    // state = {
-    //     showSideDrawer: false
-    // }
+    // Status para mostrar/ocultar sideDrawer
     const [ showSideDrawer,setShowSideDrawer ] = useState(false);
 
+    // Tratamento do sideDrawer
     const sideDrawerClosedHandler = () => {
-        // this.setState({ showSideDrawer: false });
         setShowSideDrawer(false);
     }
-    
     const sideDrawerToggleHandler = () => {
         // Por causa do sync, nao podemos usar o state anterior de forma direta. Por isso vai a forma de função.
         // this.setState({ showSideDrawer: !this.state.showSideDrawer });
@@ -31,13 +29,17 @@ const layout = props => {
         return (
             <Aux>
                 <Toolbar 
+                    language={props.language}
+                    changeLanguage={props.languageChanged}
                     isAuth={props.isAuthenticated}
                     drawerToggleClicked={sideDrawerToggleHandler} />
                 <SideDrawer
+                    language={props.language}
+                    changeLanguage={props.languageChanged}
                     isAuth={props.isAuthenticated}
                     open={showSideDrawer}
                     closed={sideDrawerClosedHandler} />
-                <main className={classes.Content}>
+                <main className={classes.Content} language={props.language}>
                     {props.children}
                 </main>
             </Aux>

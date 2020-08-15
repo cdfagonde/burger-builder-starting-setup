@@ -1,6 +1,6 @@
 import React from 'react';
-
 import classes from './Order.css';
+import { getLanguage } from '../../shared/utility';
 
 const order = (props) => {
     const ingredients = [];
@@ -33,14 +33,51 @@ const order = (props) => {
     const hh = orderDate.getHours() < 10 ? "0" + orderDate.getHours() : orderDate.getHours();
     const min = orderDate.getMinutes() < 10 ? "0" + orderDate.getMinutes() : orderDate.getMinutes();
     const orderDateFormatted = "".concat(dd).concat("/").concat(mm).concat("/").concat(yyyy).concat(" ").concat(hh).concat(":").concat(min);
+    //
+    const language = getLanguage();
+    const nameText = {
+        'EN': 'Name: ',
+        'ES': 'Nombre: ',
+        'BR': 'Nome: ',
+        'FR': 'Nom: ',
+        'IT': 'Nome: '
+    }
+    const ingredientsText = {
+        'EN': 'Ingredients: ',
+        'ES': 'Ingredientes: ',
+        'BR': 'Ingredientes: ',
+        'FR': 'Ingrédients: ',
+        'IT': 'ingredienti: '
+    }
+    const priceText = {
+        'EN': 'Price: ',
+        'ES': 'Precio: ',
+        'BR': 'Preço: ',
+        'FR': 'Prix: ',
+        'IT': 'Prezzo: '
+    }
+    const dolarText = {
+        'EN': 'U$D',
+        'ES': '$$',
+        'BR': 'R$',
+        'FR': '€',
+        'IT': '€'
+    }
+    const dateText = {
+        'EN': 'Date: ',
+        'ES': 'Fecha: ',
+        'BR': 'Data: ',
+        'FR': 'Date: ',
+        'IT': 'Data: '
+    }
 
     // Go..
     return (
         <div className={classes.Order}>
-            <p>Name: <b>{props.name}</b> [{props.email}]</p>
-            <p>Ingredients: {ingredientOutput}</p>
-            <p>Price: <strong>U$D {props.price.toFixed(2)}</strong></p>
-            <p>Date: {orderDateFormatted}</p>
+            <p>{nameText[language]}<b>{props.name}</b> [{props.email}]</p>
+            <p>{ingredientsText[language]} {ingredientOutput}</p>
+            <p>{priceText[language]} <strong>{dolarText[language]} {props.price.toFixed(2)}</strong></p>
+            <p>{dateText[language]} {orderDateFormatted}</p>
         </div>
     );
 };

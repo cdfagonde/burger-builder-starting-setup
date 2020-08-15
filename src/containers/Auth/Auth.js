@@ -7,48 +7,55 @@ import Button from '../../components/UI/Button/Button';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import classes from './Auth.css';
 import * as actions from '../../store/actions/index';
-import { checkValidity } from '../../shared/utility';
+import { checkValidity, getLanguage } from '../../shared/utility';
 
 const auth = props => {
-    /* state = {
-        controls: {
-            email: {
-                elementType: 'input',
-                elementConfig: {
-                    type: 'email',
-                    placeholder: 'E-mail address'
-                },
-                value: '',
-                validation: {
-                    required: true,
-                    isEmail: true
-                },
-                valid: false,
-                touched: false
-            },
-            password: {
-                elementType: 'input',
-                elementConfig: {
-                    type: 'password',
-                    placeholder: 'Password'
-                },
-                value: '',
-                validation: {
-                    required: true,
-                    minLength: 6
-                },
-                valid: false,
-                touched: false
-            }
-        },
-        isSignup: true
-    }; */
+
+    // Identificação do idioma..
+    let language = getLanguage();
+    //
+    const emailText = {
+        'EN': 'E-mail Address',
+        'ES': 'Correo Electrónico',
+        'BR': 'Endereço Eletrônico',
+        'FR': 'Adresse e-mail',
+        'IT': 'Indirizzo email'
+    }
+    const passwordText = {
+        'EN': 'Password',
+        'ES': 'Seña',
+        'BR': 'Senha',
+        'FR': 'Mot de passe',
+        'IT': "Parola d'ordine"
+    }
+    const signInButtonText = {
+        'EN': 'Sign In',
+        'ES': 'Entrar',
+        'BR': 'Entrar',
+        'FR': "S'identifier",
+        'IT': 'Accesso'
+    }
+    const signUpButtonText = {
+        'EN': 'Sign Up',
+        'ES': 'Registrar',
+        'BR': 'Cadastrar',
+        'FR': "S'inscrire",
+        'IT': 'Registrati'
+    }
+    const switchText = {
+        'EN': 'Switch to',
+        'ES': 'Alterar para',
+        'BR': 'Mudar para',
+        'FR': 'Changer pour',
+        'IT': 'Cambia in'
+    }
+
     const [controls,setControls] = useState({
         email: {
             elementType: 'input',
             elementConfig: {
                 type: 'email',
-                placeholder: 'E-mail address'
+                placeholder: emailText[language]   // 'E-mail address'
             },
             value: '',
             validation: {
@@ -62,7 +69,7 @@ const auth = props => {
             elementType: 'input',
             elementConfig: {
                 type: 'password',
-                placeholder: 'Password'
+                placeholder: passwordText[language]   // 'Password'
             },
             value: '',
             validation: {
@@ -75,11 +82,6 @@ const auth = props => {
     });
     const [isSignup,setIsSignup] = useState(true);
 
-    // componentDidMount() {
-    //     if(!this.props.buildingBurger && this.props.authRedirectPath !== "/"){
-    //         this.props.onSetAuthRedirectPath();
-    //     }
-    // }
     const { buildingBurger, authRedirectPath, onSetAuthRedirectPath } = props;
     useEffect(() => {
         if(!buildingBurger && authRedirectPath !== "/"){
@@ -111,10 +113,6 @@ const auth = props => {
     }
 
     const switchAuthModeHandler = () => {
-        // console.log("Status atual --> " + this.state.isSignup );
-        // this.setState( prevState => {
-        //     return { isSignup: !prevState.isSignup }
-        // });
         setIsSignup(!isSignup);
     }
 
@@ -162,11 +160,13 @@ const auth = props => {
                 {errorMessage}
                 <form onSubmit={submitHandler}>
                     {form}
-                    <Button btnType="Success" > { isSignup ? 'Singup' : 'Signin' } </Button>
+                    <Button btnType="Success" > { isSignup ? signUpButtonText[language] : signInButtonText[language] } </Button>
                 </form>
                 <Button
                     btnType="Danger"
-                    clicked={switchAuthModeHandler}> Switch to { isSignup ? 'Singin' : 'Signup' } </Button>
+                    clicked={switchAuthModeHandler}> {switchText[language]} { isSignup 
+                                                                                ? signInButtonText[language]
+                                                                                : signUpButtonText[language] } </Button>
             </div>
         );
 };

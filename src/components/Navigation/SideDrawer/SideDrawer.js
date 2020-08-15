@@ -12,6 +12,7 @@ const sideDrawer = (props) => {
         attachedClasses = [classes.SideDrawer, classes.Open];
     }
     
+    //
     return (
         <Aux>
             <Backdrop show={props.open} clicked={props.closed} />
@@ -20,7 +21,10 @@ const sideDrawer = (props) => {
                     <Logo />
                 </div>
                 <nav>
-                    <NavigationItems isAuthenticated={props.isAuth} />
+                    <NavigationItems 
+                        language={props.language}
+                        changeLanguage={props.changeLanguage}
+                        isAuthenticated={props.isAuth} />
                 </nav>
             </div>
         </Aux>

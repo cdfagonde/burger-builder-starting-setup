@@ -1,4 +1,7 @@
-
+/*
+checkValidity
+    Função para aplicar as vallidações definidas num campo de um formulário
+*/
 export const checkValidity = (value, rules) => {
     let isValid = true;
     if (!rules) {
@@ -29,3 +32,20 @@ export const checkValidity = (value, rules) => {
 
     return isValid;
 };
+
+
+/*
+    getLanguage
+    Função que retorna o código da linguagem definido na nossa base local.
+*/
+export const getLanguage = () => {
+    // Buscamos o idioma na base local.
+    let language = localStorage.getItem("burger-language");
+    if(!language) {
+        // Caso não exista, definimos o padrão (English)
+        language = 'EN';
+        localStorage.setItem("burger-language","EN");
+    }
+    // Bye..
+    return language;
+}

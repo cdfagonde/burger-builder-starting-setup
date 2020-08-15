@@ -13,6 +13,7 @@ import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 // import * as actionTypes from '../../store/actions/actionTypes';
 // import * as actionCreators from '../../store/actions/burgerBuilder';
 import * as burgerBuilderActions from '../../store/actions/index';
+import { getLanguage } from '../../shared/utility';
 
 const burgerBuilder = props => {
 
@@ -93,8 +94,16 @@ const burgerBuilder = props => {
 
         // Resumo do pedido será montado após termos a lista de ingredientes
         let orderSummary = null;
+        const language = getLanguage();
+        const messageText = {
+            'EN': "Cannot load ingredients!",
+            'ES': "No fue posible cargar la lista de ingredientes!",
+            'BR': "Não foi possível carregar a lista de ingredientes!",
+            'FR': "La liste des ingrédients n'a pas pu être chargée!",
+            'IT': "Impossibile caricare l'elenco degli ingredienti!"
+        }
         // Tanto o burquer quando os controles, serão mostrados somente após a leitura dos ingredientes..
-        let burger = error ? <p>Cannot load ingredients!</p> : <Spinner />;
+        let burger = error ? <p>{messageText[language]}</p> : <Spinner />;
 
         if(ings) {
             // Já temos os ingredientes, então podemos seguir
